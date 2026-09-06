@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vartaa AI — Vernacular AI Sales Rep</title>
+<meta name="description" content="Vartaa AI talks to your leads on WhatsApp and voice calls in Hindi, Marathi and English — answers doubts, handles objections, follows up and books them into your batch.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23f05a28'/%3E%3Ctext x='32' y='44' font-size='36' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3Eव%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7fb;--panel:#fff;--line:#e6e8f0;--txt:#111827;--mut:#6b7280;--brand:#f05a28;--brand-soft:#fff1eb;--green:#16a34a;--green-soft:#ecfdf3;--blue:#2563eb;--blue-soft:#eff4ff;--amber:#d97706;--amber-soft:#fffbeb;--red:#dc2626;--red-soft:#fef2f2;--wa:#075e54;--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,"Noto Sans Devanagari",system-ui,sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5;height:100vh;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:0;background:none;font-size:14px}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--txt)}
+a{color:inherit;text-decoration:none}
+.app{display:grid;grid-template-columns:232px 1fr;height:100vh}
+/* sidebar */
+.side{background:#0f172a;color:#cbd5e1;display:flex;flex-direction:column;padding:16px 12px}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;color:#fff}
+.brand .mk{width:34px;height:34px;border-radius:10px;background:var(--brand);display:grid;place-items:center;font-weight:800;font-size:18px}
+.brand b{display:block;font-size:16px;letter-spacing:-.01em}.brand small{font-size:11px;color:#94a3b8}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border-radius:9px;color:#cbd5e1;font-weight:500;text-align:left}
+.nav button:hover{background:#1e293b;color:#fff}
+.nav button.on{background:var(--brand);color:#fff;font-weight:600}
+.nav .sec{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#64748b;padding:14px 10px 6px}
+.side .foot{margin-top:auto;padding:10px;font-size:12px;color:#94a3b8;border-top:1px solid #1e293b}
+.status{display:flex;align-items:center;gap:7px;font-size:12px;padding:8px 10px;border-radius:9px;background:#1e293b;margin-top:8px}
+.status i{width:8px;height:8px;border-radius:50%;background:#64748b}
+.status.ok i{background:#22c55e}.status.bad i{background:#ef4444}
+/* main */
+.main{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.top{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--panel);border-bottom:1px solid var(--line)}
+.top h1{font-size:16px;font-weight:700}
+.top .sub{font-size:12px;color:var(--mut)}
+.page{display:none;flex:1;overflow:auto;padding:20px 24px}
+.page.on{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.grid{display:grid;gap:14px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:9px;font-weight:600;background:var(--brand);color:#fff;transition:.15s}
+.btn:hover{filter:brightness(1.05)}.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sec{background:#fff;border:1px solid var(--line);color:var(--txt)}.btn.sec:hover{background:#f9fafb}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn.green{background:var(--green)}.btn.blue{background:var(--blue)}.btn.red{background:var(--red)}
+.chip{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:#f3f4f6;color:#374151;white-space:nowrap}
+.chip.o{background:var(--brand-soft);color:var(--brand)}.chip.g{background:var(--green-soft);color:var(--green)}.chip.b{background:var(--blue-soft);color:var(--blue)}.chip.a{background:var(--amber-soft);color:var(--amber)}.chip.r{background:var(--red-soft);color:var(--red)}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:0 0 5px}
+.f{margin-bottom:12px}
+.f input,.f select,.f textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;outline:none}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.f .hint{font-size:11.5px;color:var(--mut);margin-top:4px}
+h2{font-size:15px;font-weight:700;margin-bottom:10px}
+h3{font-size:13px;font-weight:700;margin-bottom:8px}
+.kpi .n{font-size:28px;font-weight:800;letter-spacing:-.02em}.kpi .l{font-size:12px;color:var(--mut);font-weight:500}.kpi .d{font-size:12px;color:var(--green);margin-top:2px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--line);font-weight:600}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:13px}
+tr.click{cursor:pointer}tr.click:hover td{background:#fafafa}
+.bar{height:22px;background:#f3f4f6;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .5s}
+.frow{display:flex;align-items:center;gap:10px;font-size:13px;margin-bottom:8px}.frow b{width:150px;font-weight:500;color:var(--mut)}.frow .bar{flex:1}.frow span{width:36px;text-align:right;font-weight:700}
+.score{height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden;width:70px;display:inline-block;vertical-align:middle}.score i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--green))}
+.empty{padding:40px;text-align:center;color:var(--mut)}
+.empty b{display:block;color:var(--txt);font-size:15px;margin-bottom:6px}
+/* inbox */
+.inbox{display:grid;grid-template-columns:280px 1fr 340px;height:calc(100vh - 56px)}
+.llist{border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;min-height:0}
+.llist .hd{padding:12px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.llist .hd input{flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+.llist .items{overflow:auto;flex:1}
+.li{padding:11px 12px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.li:hover{background:#fafafa}.li.on{background:var(--brand-soft)}
+.av{width:36px;height:36px;border-radius:50%;background:#e5e7eb;display:grid;place-items:center;font-weight:700;font-size:13px;color:#374151;flex-shrink:0}
+.li .nm{font-weight:600;font-size:13px;display:flex;justify-content:space-between}.li .nm small{color:var(--mut);font-weight:400;font-size:11px}
+.li .pv{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
+.thread{display:flex;flex-direction:column;min-height:0;background:#efeae2}
+.thread .hd{background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.thread .hd .nm{font-weight:700}.thread .hd .st{font-size:12px;color:var(--mut)}
+.msgs{flex:1;overflow:auto;padding:16px 20px;display:flex;flex-direction:column;gap:6px;background:#efeae2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cg fill='%23000' fill-opacity='.03'%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3Ccircle cx='60' cy='50' r='3'/%3E%3C/g%3E%3C/svg%3E")}
+.m{max-width:68%;padding:8px 11px;border-radius:10px;font-size:13.5px;white-space:pre-wrap;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.06);position:relative}
+.m.agent{background:#fff;align-self:flex-start;border-top-left-radius:2px}
+.m.lead{background:#d9fdd3;align-self:flex-end;border-top-right-radius:2px}
+.m .t{display:block;font-size:10px;color:#8a8f98;text-align:right;margin-top:3px}
+.m.sys{align-self:center;background:#fff7d6;color:#6b5a1c;font-size:11.5px;padding:4px 10px;border-radius:8px;box-shadow:none;max-width:90%;text-align:center}
+.m.tool{align-self:center;background:#e8f0fe;color:#1e3a8a;font-size:11.5px;padding:4px 10px;border-radius:8px;box-shadow:none;font-family:ui-monospace,monospace}
+.typing{align-self:flex-start;background:#fff;padding:9px 12px;border-radius:10px;display:flex;gap:4px}.typing i{width:6px;height:6px;border-radius:50%;background:#9ca3af;animation:bl 1.2s infinite}.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+.compose{background:var(--panel);border-top:1px solid var(--line);padding:10px 14px}
+.compose .who{font-size:11.5px;color:var(--mut);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.compose .row{display:flex;gap:8px}
+.compose input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:9px;outline:none}
+.brain{border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:14px}
+.brain h3{display:flex;justify-content:space-between;align-items:center}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:12.5px}.kv span:first-child{color:var(--mut)}.kv span:last-child{font-weight:600;text-align:right}
+.ins{border-left:3px solid var(--brand);background:#fafafa;padding:8px 10px;border-radius:0 8px 8px 0;font-size:12.5px;margin-bottom:8px}.ins b{color:var(--brand)}
+.tl{font-size:12.5px;padding:6px 0;border-bottom:1px solid var(--line)}.tl b{display:block;font-family:ui-monospace,monospace;font-size:12px}.tl span{color:var(--mut)}
+/* voice */
+.voice{display:grid;grid-template-columns:380px 1fr;gap:18px}
+.phone{background:#0f172a;border-radius:28px;padding:28px 20px 20px;color:#fff;min-height:600px;display:flex;flex-direction:column;align-items:center}
+.phone .big{width:96px;height:96px;border-radius:50%;background:var(--brand);display:grid;place-items:center;font-size:36px;font-weight:800;position:relative}
+.phone.live .big::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:2px solid var(--brand);animation:ring 1.8s infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.4);opacity:0}}
+.phone .nm{font-size:20px;font-weight:700;margin-top:14px}.phone .st{color:#94a3b8;font-size:12.5px;margin-top:4px;text-align:center}
+.wave{display:flex;gap:4px;align-items:center;height:40px;margin:16px 0}.wave i{width:4px;height:6px;background:#fdba74;border-radius:2px}
+.phone.speaking .wave i{animation:wv .7s infinite ease-in-out}.phone.speaking .wave i:nth-child(odd){animation-delay:.15s}.phone.speaking .wave i:nth-child(3n){animation-delay:.3s}
+@keyframes wv{0%,100%{height:6px}50%{height:32px}}
+.tr{flex:1;width:100%;overflow:auto;background:rgba(255,255,255,.06);border-radius:12px;padding:10px;font-size:13px;display:flex;flex-direction:column;gap:6px}
+.tr div{padding:6px 9px;border-radius:8px;max-width:92%}.tr .a{background:rgba(240,90,40,.25);align-self:flex-start}.tr .u{background:rgba(37,99,235,.3);align-self:flex-end}
+.phone input{width:100%;margin-top:10px;padding:9px 11px;border-radius:9px;border:1px solid #334155;background:#1e293b;color:#fff;outline:none}
+.cb{display:flex;gap:14px;margin-top:14px}.cb button{width:56px;height:56px;border-radius:50%;font-size:22px;color:#fff;display:grid;place-items:center}
+.cb .ans{background:#22c55e}.cb .end{background:#ef4444}.cb .mic{background:var(--blue)}.cb .mic.rec{animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,.6)}50%{box-shadow:0 0 0 12px rgba(37,99,235,0)}}
+.toast{position:fixed;bottom:20px;right:20px;background:#111827;color:#fff;padding:11px 14px;border-radius:10px;font-size:13px;z-index:99;max-width:360px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.banner{background:var(--amber-soft);border:1px solid #fde68a;color:#92400e;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
+.banner code{background:#fff;padding:1px 5px;border-radius:4px}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;place-items:center;z-index:50}.modal.on{display:grid}
+.modal .box{background:#fff;border-radius:14px;padding:20px;width:440px;max-width:94vw}
+.int{display:flex;gap:12px;align-items:flex-start}.int .ic{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;font-size:20px;background:#f3f4f6;flex-shrink:0}
+.int p{font-size:12.5px;color:var(--mut)}
+.arch{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.arch .bx{background:#fafafa;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:12px;position:relative}.arch .bx b{display:block;color:var(--brand);margin-bottom:4px}.arch .bx:not(:last-child)::after{content:"→";position:absolute;right:-12px;top:12px;color:var(--brand);font-weight:800}
+@media(max-width:1100px){.inbox{grid-template-columns:240px 1fr}.brain{display:none}.voice,.g4,.g3,.g2{grid-template-columns:1fr}.arch{grid-template-columns:1fr}.arch .bx::after{display:none}}
+@media(max-width:760px){.app{grid-template-columns:1fr}.side{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mk">व</div><div><b>Vartaa AI</b><small>Vernacular AI Sales Rep</small></div></div>
+    <div class="nav">
+      <div class="sec">Workspace</div>
+      <button data-p="dash" class="on">📊 Dashboard</button>
+      <button data-p="inbox">💬 Conversations</button>
+      <button data-p="voice">📞 Voice calls</button>
+      <button data-p="leads">👥 Leads</button>
+      <div class="sec">Agent</div>
+      <button data-p="agent">🧠 Knowledge base</button>
+      <button data-p="playbook">🎯 Objection playbook</button>
+      <button data-p="integrations">🔌 Integrations</button>
+      <div class="sec">About</div>
+      <button data-p="how">🏗️ How it works</button>
+    </div>
+    <div class="status" id="status"><i></i><span>Checking backend…</span></div>
+    <div class="foot"><b style="color:#e2e8f0" id="wsName">AI Freedom Institute</b><br>Vartaa AI v0.2 · Builders' Pitch Fest 2026</div>
+  </aside>
+
+  <main class="main">
+    <div class="top"><div><h1 id="ttl">Dashboard</h1><div class="sub" id="tsub">Everything your AI sales rep did — live</div></div><div id="topActions"></div></div>
+
+    <!-- DASHBOARD -->
+    <section class="page on" id="p-dash">
+      <div id="dashBanner"></div>
+      <div class="grid g4" style="margin-bottom:14px">
+        <div class="card kpi"><div class="n" id="k1">0</div><div class="l">Leads</div><div class="d" id="k1d">—</div></div>
+        <div class="card kpi"><div class="n" id="k2">0</div><div class="l">Agent messages sent</div><div class="d" id="k2d">—</div></div>
+        <div class="card kpi"><div class="n" id="k3">0</div><div class="l">Workshop bookings</div><div class="d" id="k3d">—</div></div>
+        <div class="card kpi"><div class="n" id="k4">0</div><div class="l">Needs a human</div><div class="d" id="k4d">callbacks + escalations</div></div>
+      </div>
+      <div class="grid" style="grid-template-columns:1.5fr 1fr;margin-bottom:14px">
+        <div class="card"><h2>Recent activity</h2><div id="activity"></div></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card"><h2>Funnel</h2><div id="funnel"></div></div>
+          <div class="card"><h2>Objections heard</h2><div id="objs"></div></div>
+        </div>
+      </div>
+      <div class="card"><h2>Try it in 60 seconds</h2>
+        <div class="grid g3" style="font-size:13px">
+          <div class="ins"><b>1.</b> Open <b>Conversations</b> → <b>New lead</b>. Reply as the lead in Hinglish, Marathi or English. The agent answers live (Gemini) and every reply is classified.</div>
+          <div class="ins"><b>2.</b> Click <b>Auto-play lead</b> to let an AI-simulated lead argue with the agent for a few turns — watch objections get handled.</div>
+          <div class="ins"><b>3.</b> Go to <b>Voice calls</b>, answer, and speak (Chrome). Same brain, spoken in Hindi/Marathi.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INBOX -->
+    <section class="page" id="p-inbox" style="padding:0">
+      <div class="inbox">
+        <div class="llist">
+          <div class="hd"><input id="lsearch" placeholder="Search leads…" oninput="renderList()"><button class="btn sm" onclick="openNewLead()">+ New</button></div>
+          <div class="items" id="litems"></div>
+        </div>
+        <div class="thread">
+          <div class="hd"><div class="av" id="thAv">?</div><div style="flex:1"><div class="nm" id="thName">Select a lead</div><div class="st" id="thSt">—</div></div><div id="thActions"></div></div>
+          <div class="msgs" id="msgs"><div class="empty"><b>No conversation selected</b>Create a new lead to start a live conversation with your AI rep.</div></div>
+          <div class="compose">
+            <div class="who"><span>✍️ You are replying <b>as the lead</b> (simulator). In production this is the lead's WhatsApp.</span><span id="lang-hint" style="color:var(--brand)"></span></div>
+            <div class="row"><input id="composeIn" placeholder="Type as the lead — Hinglish / मराठी / English…" onkeydown="if(event.key==='Enter')sendLead()"><button class="btn green" onclick="sendLead()">Send</button><button class="btn sec" onclick="autoLead()" title="AI role-plays the lead for one turn">🤖 Auto-play lead</button></div>
+          </div>
+        </div>
+        <div class="brain" id="brain"><div class="empty">Agent brain will appear here</div></div>
+      </div>
+    </section>
+
+    <!-- VOICE -->
+    <section class="page" id="p-voice">
+      <div class="voice">
+        <div>
+          <div class="f"><label>Lead to call</label><select id="vcLead"></select></div>
+          <div class="phone" id="phone">
+            <div class="big" id="vcAv">R</div>
+            <div class="nm" id="vcName">Riya · Vartaa AI</div>
+            <div class="st" id="vcSt">Outbound call — press answer to simulate the lead picking up</div>
+            <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="tr" id="vcTr"><div class="a" style="opacity:.6">Transcript will appear here…</div></div>
+            <input id="vcIn" placeholder="…or type what the lead says and press Enter" onkeydown="if(event.key==='Enter'){vcUser(this.value);this.value=''}">
+            <div class="cb"><button class="ans" onclick="startCall()" title="Answer">📞</button><button class="mic" id="vcMic" onclick="listen()" title="Speak">🎙️</button><button class="end" onclick="endCall()" title="Hang up">✕</button></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:14px"><h2>How the voice channel works</h2>
+            <p style="font-size:13px;color:var(--mut)">The same agent brain answers on calls — the API is called with <code>channel: "voice"</code>, so replies are short, spoken sentences. In this build the lead's speech is captured with the browser's speech recognition and the agent's voice is the browser's Hindi/Marathi voice. In production the call runs on Exotel/Twilio with Sarvam STT/TTS; the brain does not change.</p>
+            <div class="kv"><span>Speech-to-text</span><span>Web Speech API (hi-IN / mr-IN / en-IN)</span></div>
+            <div class="kv"><span>Reasoning</span><span>Gemini via /api/chat</span></div>
+            <div class="kv"><span>Text-to-speech</span><span>Browser voices (Chrome recommended)</span></div>
+            <div class="kv"><span>Call transcript</span><span>Saved to the lead's conversation</span></div>
+          </div>
+          <div class="card"><h2>Live call analysis</h2><div id="vcBrain"><div class="empty">Answer the call to start</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADS -->
+    <section class="page" id="p-leads">
+      <div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="margin:0">All leads</h2><div style="display:flex;gap:8px"><button class="btn sm sec" onclick="exportCSV()">⬇ Export CSV</button><button class="btn sm" onclick="openNewLead()">+ New lead</button></div></div>
+        <div style="overflow:auto"><table><thead><tr><th>Lead</th><th>Language</th><th>Source</th><th>Last intent</th><th>Score</th><th>Stage</th><th>Summary</th><th>Last activity</th></tr></thead><tbody id="leadRows"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- AGENT / KB -->
+    <section class="page" id="p-agent">
+      <div class="grid g2">
+        <div class="card">
+          <h2>Business & course</h2>
+          <div class="f"><label>Business / institute</label><input id="c_biz"></div>
+          <div class="f"><label>Founder / owner name (for escalations)</label><input id="c_owner"></div>
+          <div class="grid g2"><div class="f"><label>Agent name</label><input id="c_agent"></div><div class="f"><label>Default language for opener</label><select id="c_lang"><option value="hi">Hindi / Hinglish</option><option value="mr">Marathi</option><option value="en">English</option></select></div></div>
+          <div class="f"><label>Course / program</label><input id="c_course"></div>
+          <div class="f"><label>One-line promise</label><input id="c_promise"></div>
+          <div class="f"><label>Who is it for</label><input id="c_who"></div>
+          <div class="f"><label>Format</label><input id="c_format"></div>
+          <div class="grid g2"><div class="f"><label>Regular price (₹)</label><input id="c_price" type="number"></div><div class="f"><label>Offer price (₹)</label><input id="c_offer" type="number"></div></div>
+          <div class="f"><label>Offer note (must be true)</label><input id="c_offerNote"></div>
+          <div class="f"><label>EMI / payment options</label><input id="c_emi"></div>
+          <div class="grid g2"><div class="f"><label>Next batch</label><input id="c_batch"></div><div class="f"><label>Free workshop slot</label><input id="c_workshop"></div></div>
+        </div>
+        <div class="card">
+          <h2>Trust, tone & guardrails</h2>
+          <div class="f"><label>Proof points the agent may cite (only true facts)</label><textarea id="c_proof" rows="3"></textarea></div>
+          <div class="f"><label>Refund / guarantee policy</label><input id="c_refund"></div>
+          <div class="f"><label>Tone</label><select id="c_tone"><option>Friendly didi/bhaiya — informal, warm</option><option>Professional counsellor</option><option>Energetic, high-conviction</option></select></div>
+          <div class="f"><label>Hard guardrails</label><textarea id="c_guard" rows="2"></textarea><div class="hint">Critical for finance/trading educators — no income guarantees.</div></div>
+          <div class="f"><label>Escalate to a human when…</label><input id="c_esc"></div>
+          <div class="f"><label>Default lead source label</label><input id="c_source"></div>
+          <div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="saveConfig(true)">Save knowledge base</button><button class="btn sec" onclick="testAgent()">Test: generate an opener</button><span id="cfgMsg" style="font-size:12.5px;color:var(--green)"></span></div>
+          <div id="testOut" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYBOOK -->
+    <section class="page" id="p-playbook">
+      <div class="grid g2">
+        <div class="card"><h2>Objection playbook</h2>
+          <p style="font-size:13px;color:var(--mut);margin-bottom:10px">Write how <i>you</i> answer each objection. The agent uses these — in the lead's language — instead of inventing arguments.</p>
+          <div class="f"><label>Playbook (one objection per line: objection → your answer)</label><textarea id="c_objections" rows="12"></textarea></div>
+          <button class="btn" onclick="saveConfig(true)">Save playbook</button> <span id="pbMsg" style="font-size:12.5px;color:var(--green)"></span>
+        </div>
+        <div class="card"><h2>Objections heard so far (from real conversations)</h2><div id="objs2"></div>
+          <h3 style="margin-top:16px">Stress-test the agent</h3>
+          <p style="font-size:13px;color:var(--mut);margin-bottom:8px">Creates a lead with a tough persona and lets the AI lead argue with your agent for 6 turns.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn sm sec" onclick="stress('price')">💸 Price-sensitive (Hinglish)</button>
+            <button class="btn sm sec" onclick="stress('trust')">🤨 Suspicious (Marathi)</button>
+            <button class="btn sm sec" onclick="stress('time')">⏰ No time (English)</button>
+            <button class="btn sm sec" onclick="stress('refund')">⚠️ Refund demand (Hindi)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTEGRATIONS -->
+    <section class="page" id="p-integrations">
+      <div class="grid g3">
+        <div class="card int"><div class="ic">🟢</div><div><h3>WhatsApp Business (Cloud API)</h3><p>Connect your WhatsApp Business number; incoming messages go to the agent, replies go back to the lead.</p><span class="chip a">Planned · v0.3</span></div></div>
+        <div class="card int"><div class="ic">📞</div><div><h3>Exotel / Twilio voice</h3><p>Indian virtual number; outbound calls with Sarvam STT/TTS; same brain as chat.</p><span class="chip a">Planned · v0.3</span></div></div>
+        <div class="card int"><div class="ic">📣</div><div><h3>Meta Lead Ads</h3><p>New form submissions create a lead and trigger the opener within 60 seconds.</p><span class="chip a">Planned · v0.3</span></div></div>
+        <div class="card int"><div class="ic">💳</div><div><h3>Razorpay</h3><p><code>send_payment_link</code> creates a real payment link and marks the lead enrolled on success.</p><span class="chip a">Planned · v0.4</span></div></div>
+        <div class="card int"><div class="ic">📄</div><div><h3>Google Sheets / Zoho CRM</h3><p>Two-way sync of leads, stages and summaries.</p><span class="chip a">Planned · v0.4</span></div></div>
+        <div class="card int"><div class="ic">🧠</div><div><h3>LLM backend</h3><p>Google Gemini via Netlify Function. Model: <code id="modelName">—</code></p><span class="chip g" id="llmChip">Checking…</span></div></div>
+      </div>
+      <div class="card" style="margin-top:14px"><h2>API</h2><p style="font-size:13px;color:var(--mut)">The agent is a single endpoint any channel can call:</p>
+<pre style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:10px;font-size:12px;overflow:auto;margin-top:8px">POST /api/chat
+{ "config": { …knowledge base… }, "channel": "whatsapp" | "voice",
+  "messages": [ { "role": "agent" | "lead", "text": "…" } ] }
+
+→ { "reply", "language", "script", "intent", "confidence", "objection", "strategy",
+    "guardrails": [], "lead_update": { "name", "goal", "stage", "score_delta", "summary" },
+    "tool_calls": [ { "name": "book_workshop", "args": {…} } ], "meta": { "model", "latency_ms" } }</pre></div>
+    </section>
+
+    <!-- HOW -->
+    <section class="page" id="p-how">
+      <div class="card" style="margin-bottom:14px"><h2>Architecture</h2>
+        <div class="arch">
+          <div class="bx"><b>Channels</b>Meta Lead Ads · WhatsApp Cloud API · Exotel/Twilio · Web</div>
+          <div class="bx"><b>Language layer</b>Indic STT/TTS · language & script detection · Hinglish normalisation</div>
+          <div class="bx"><b>Agent brain</b>Gemini + coach knowledge base · intent classifier · objection playbook · guardrails · structured output</div>
+          <div class="bx"><b>Tools</b>book_workshop · send_payment_link · schedule_callback · escalate_to_human</div>
+          <div class="bx"><b>CRM & nurture</b>Lead scoring · stages · 7-day follow-ups · dashboard · Sheets/Zoho</div>
+        </div>
+      </div>
+      <div class="grid g3">
+        <div class="card"><h3>What is real in this build</h3><p style="font-size:13px;color:var(--mut)">Every agent reply, classification, lead-profile update and tool call on this site is generated live by Gemini through <code>/api/chat</code> using your knowledge base. Nothing is scripted. Leads, conversations and analytics are stored in your browser (localStorage) for this preview.</p></div>
+        <div class="card"><h3>What is simulated</h3><p style="font-size:13px;color:var(--mut)">Message delivery — you type as the lead instead of a real WhatsApp number, and calls use the browser's microphone and voices. Tool calls are logged and update the CRM but do not yet hit Razorpay/Zoom/Exotel.</p></div>
+        <div class="card"><h3>Responsible AI</h3><p style="font-size:13px;color:var(--mut)">Discloses it is an AI when asked. No income guarantees, no fake scarcity, no invented facts (knowledge-base grounding). Refunds, complaints and founder requests are escalated to a human. DPDP-compliant consent at the lead form in production.</p></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- new lead modal -->
+<div class="modal" id="mNew"><div class="box">
+  <h2>New lead</h2>
+  <div class="grid g2"><div class="f"><label>Name (as on the ad form)</label><input id="n_name" placeholder="e.g. Suresh Patil"></div><div class="f"><label>Phone (optional)</label><input id="n_phone" placeholder="+91…"></div></div>
+  <div class="grid g2"><div class="f"><label>Source</label><select id="n_src"><option>Meta ad</option><option>Instagram</option><option>YouTube</option><option>Website form</option><option>Referral</option><option>Walk-in</option></select></div><div class="f"><label>Preferred language</label><select id="n_lang"><option value="hi">Hindi / Hinglish</option><option value="mr">Marathi</option><option value="en">English</option></select></div></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn sec" onclick="closeModal()">Cancel</button><button class="btn" onclick="createLead()">Create & send opener</button></div>
+</div></div>
+
+<script>
+/* ================= STORE ================= */
+const KEY='vartaa.v2';
+const DEF_CFG={biz:'AI Freedom Institute',owner:'Ajit sir',agent:'Riya',lang:'hi',course:'AI Income Blueprint 2.0',promise:'Learn to earn with AI tools — freelancing, content and automation — in Hindi, no coding needed',who:'Students, homemakers, working professionals and small business owners',format:'6-week live program on Zoom, evening batches, lifetime recordings, WhatsApp support group, physical classroom option in Pune (ACTEASY Academy, Dhankawadi)',price:4999,offer:1999,offerNote:'for this batch only',emi:'3 monthly instalments available',batch:'15 September, 7 PM',workshop:'Sunday 11 AM (1 hour, free, Module 1 included)',proof:'Physical classroom in Pune (ACTEASY Academy, Dhankawadi); founder Ajit Ovhal has authored 4 books (Stop Gambling Start Trading, Mind Over Markets, Intraday Trading Guide, Vibe Coding); teaches in Hindi, Marathi and English; student interview videos available on request',refund:'7-day money-back guarantee after enrolment',tone:'Friendly didi/bhaiya — informal, warm',guard:'No income or returns guarantees. No trading tips or stock recommendations. No fake urgency or invented deadlines. Never disparage other institutes.',esc:'Lead asks to speak to Ajit sir directly, or asks about refunds',source:'Meta ad "AI se paise kaise kamaye"',objections:'"Mehenga hai / too expensive" → Regular fee is ₹4,999, this batch is ₹1,999 with 3 EMIs; attend the free Sunday workshop first, decide after seeing Module 1; 7-day refund.\n"Time nahi hai / busy with job" → Classes are 7 PM, recordings for life, 20–30 minutes a day is enough; 60% of students are working professionals.\n"Sach hai kya / is this a scam?" → We never guarantee income; physical classroom in Pune you can visit; 4 published books; student interview videos; free workshop with no payment.\n"Sochke batata hoon / let me think" → Of course; book the free workshop so the decision is easier; send a 2-minute video to share with family; follow up tomorrow.\n"Coding nahi aata / no laptop" → No coding; 40% students learn on mobile.'};
+let S=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.cfg)return s;}catch(e){}return {cfg:{...DEF_CFG},leads:[],events:[]};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+const STAGE={new:['New','chip'],contacted:['Contacted','chip b'],interested:['Interested','chip b'],objection:['Objection','chip a'],workshop_booked:['Workshop booked','chip g'],enrolled:['Enrolled','chip g'],callback:['Callback','chip o'],escalated:['Escalated','chip r'],lost:['Lost','chip']};
+const LANGN={hi:'Hindi',hinglish:'Hinglish',mr:'Marathi',en:'English',other:'Other'};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const now=()=>new Date().toISOString();
+const fmtT=iso=>new Date(iso).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+const ago=iso=>{const m=Math.round((Date.now()-new Date(iso))/60000);return m<1?'just now':m<60?m+'m ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago';};
+function toast(m){const t=document.createElement('div');t.className='toast';t.innerHTML=m;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
+function esc(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function logEvent(text,leadId){S.events.unshift({t:now(),text,leadId});S.events=S.events.slice(0,200);}
+
+/* ================= NAV ================= */
+const TITLES={dash:['Dashboard','Everything your AI sales rep did — live'],inbox:['Conversations','Live WhatsApp-style conversations with the agent'],voice:['Voice calls','Outbound AI calls — same brain, spoken'],leads:['Leads','Auto-built CRM from every conversation'],agent:['Knowledge base','What the agent knows — its only source of truth'],playbook:['Objection playbook','Your answers, in the lead\'s language'],integrations:['Integrations','Channels and systems'],how:['How it works','Architecture and what is real in this build']};
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));document.getElementById('p-'+p).classList.add('on');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));document.getElementById('ttl').textContent=TITLES[p][0];document.getElementById('tsub').textContent=TITLES[p][1];
+ if(p==='dash')renderDash();if(p==='inbox'){renderList();renderThread();}if(p==='leads')renderLeads();if(p==='agent')fillCfg();if(p==='playbook'){fillCfg();renderObjs('objs2');}if(p==='voice')fillVcLeads();}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.p));
+
+/* ================= BACKEND ================= */
+let backend={ok:false,hasKey:false,model:'—'};
+async function health(){const el=document.getElementById('status');try{const r=await fetch('/api/health');const j=await r.json();backend=j;el.className='status '+(j.hasKey?'ok':'bad');el.querySelector('span').textContent=j.hasKey?'Agent online · '+j.model:'Backend: GEMINI_API_KEY missing';document.getElementById('modelName').textContent=j.model;document.getElementById('llmChip').textContent=j.hasKey?'Connected':'Key missing';document.getElementById('llmChip').className='chip '+(j.hasKey?'g':'r');
+ document.getElementById('dashBanner').innerHTML=j.hasKey?'':'<div class="banner">⚠️ The agent backend has no API key. In Netlify → Site configuration → Environment variables add <code>GEMINI_API_KEY</code>, then redeploy.</div>';}
+ catch(e){el.className='status bad';el.querySelector('span').textContent='Backend unreachable';document.getElementById('dashBanner').innerHTML='<div class="banner">⚠️ Cannot reach <code>/api/health</code>. Deploy on Netlify (functions in <code>netlify/functions</code>) — opening the HTML file directly won\'t run the agent.</div>';}}
+async function brain(lead,channel,opts={}){const cfg={...S.cfg,source:lead.source,leadName:lead.name};const messages=lead.messages.filter(m=>m.role==='agent'||m.role==='lead').filter(m=>!opts.voiceOnly||m.channel==='voice'||m.role==='agent').map(m=>({role:m.role,text:m.text}));
+ const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:cfg,messages,channel,opener:!!opts.opener})});const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||'Agent error');return j;}
+async function simLead(lead,channel,persona){const messages=lead.messages.filter(m=>m.role==='agent'||m.role==='lead').map(m=>({role:m.role,text:m.text}));const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:S.cfg,messages,channel,mode:'lead_sim',persona})});const j=await r.json();if(!r.ok||j.error)throw new Error(j.error||'Sim error');return j.text;}
+
+/* ================= LEADS ================= */
+let cur=null, busy=false;
+function getLead(id){return S.leads.find(l=>l.id===id);}
+function openNewLead(){document.getElementById('mNew').classList.add('on');document.getElementById('n_name').value='';document.getElementById('n_lang').value=S.cfg.lang;setTimeout(()=>document.getElementById('n_name').focus(),50);}
+function closeModal(){document.getElementById('mNew').classList.remove('on');}
+async function createLead(){const name=document.getElementById('n_name').value.trim()||'Unknown lead';const lead={id:uid(),name,phone:document.getElementById('n_phone').value.trim(),source:document.getElementById('n_src').value,lang:document.getElementById('n_lang').value,stage:'new',score:10,messages:[],tools:[],created:now(),updated:now(),last:null,summary:''};S.leads.unshift(lead);save();closeModal();logEvent(`New lead <b>${esc(name)}</b> from ${esc(lead.source)}`,lead.id);go('inbox');selectLead(lead.id);lead.messages.push({role:'sys',text:`Lead arrived from ${lead.source} · ${fmtT(now())}`,t:now()});renderThread();await agentTurn(lead,{opener:true});}
+function selectLead(id){cur=id;renderList();renderThread();renderBrain();}
+function renderList(){const q=(document.getElementById('lsearch').value||'').toLowerCase();const items=S.leads.filter(l=>!q||l.name.toLowerCase().includes(q));document.getElementById('litems').innerHTML=items.length?items.map(l=>{const lm=[...l.messages].reverse().find(m=>m.role==='agent'||m.role==='lead');return `<div class="li ${l.id===cur?'on':''}" onclick="selectLead('${l.id}')"><div class="av">${esc(l.name[0]||'?')}</div><div style="flex:1;min-width:0"><div class="nm">${esc(l.name)}<small>${l.updated?ago(l.updated):''}</small></div><div class="pv">${lm?esc(lm.text):'—'}</div><div style="margin-top:3px;display:flex;gap:4px;align-items:center"><span class="${STAGE[l.stage][1]}">${STAGE[l.stage][0]}</span><span class="chip">${l.score}</span></div></div></div>`;}).join(''):'<div class="empty">No leads yet.<br><button class="btn sm" style="margin-top:8px" onclick="openNewLead()">+ New lead</button></div>';}
+function renderThread(){const l=getLead(cur);const box=document.getElementById('msgs');if(!l){box.innerHTML='<div class="empty"><b>No conversation selected</b>Create a new lead to start a live conversation with your AI rep.</div>';return;}
+ document.getElementById('thAv').textContent=l.name[0];document.getElementById('thName').textContent=l.name+(l.phone?' · '+l.phone:'');document.getElementById('thSt').innerHTML=`${esc(l.source)} · <span class="${STAGE[l.stage][1]}">${STAGE[l.stage][0]}</span> · score ${l.score}`;
+ document.getElementById('thActions').innerHTML=`<button class="btn sm sec" onclick="followUp()" title="Agent sends a follow-up without waiting">🔁 Follow-up</button> <button class="btn sm sec" onclick="delLead()" title="Delete lead">🗑</button>`;
+ box.innerHTML=l.messages.map(m=>m.role==='sys'?`<div class="m sys">${esc(m.text)}</div>`:m.role==='tool'?`<div class="m tool">⚙ ${esc(m.text)}</div>`:`<div class="m ${m.role}">${esc(m.text)}${m.channel==='voice'?' 📞':''}<span class="t">${fmtT(m.t)}${m.role==='lead'?' ✓✓':''}</span></div>`).join('');if(busy)box.innerHTML+='<div class="typing"><i></i><i></i><i></i></div>';box.scrollTop=1e9;}
+function applyAnalysis(l,a,channel){const lu=a.lead_update||{};if(lu.name&&lu.name.length>1&&lu.name.length<40&&(l.name==='Unknown lead'||/^unknown/i.test(l.name)))l.name=lu.name;if(lu.goal)l.goal=lu.goal;if(lu.background)l.background=lu.background;if(lu.summary)l.summary=lu.summary;if(lu.stage&&STAGE[lu.stage])l.stage=lu.stage;l.score=Math.max(0,Math.min(100,(l.score||0)+(Number(lu.score_delta)||0)));l.lastIntent=a.intent;l.lastLang=a.language;if(a.objection)l.lastObjection=a.objection;l.updated=now();l.last=a;
+ for(const t of a.tool_calls||[]){const args=JSON.stringify(t.args||{});l.tools.push({name:t.name,args:t.args,t:now()});l.messages.push({role:'tool',text:`${t.name}(${args}) — ${t.reason||''}`,t:now()});
+  if(t.name==='book_workshop'){l.stage='workshop_booked';l.score=Math.max(l.score,80);logEvent(`📅 Workshop booked for <b>${esc(l.name)}</b>`,l.id);}
+  if(t.name==='send_payment_link'){logEvent(`💳 Payment link sent to <b>${esc(l.name)}</b>`,l.id);}
+  if(t.name==='schedule_callback'){l.stage='callback';logEvent(`☎️ Callback requested by <b>${esc(l.name)}</b>`,l.id);}
+  if(t.name==='escalate_to_human'){l.stage='escalated';logEvent(`⚠️ Escalated: <b>${esc(l.name)}</b> — ${esc(t.args?.reason||'')}`,l.id);}
+  if(t.name==='schedule_followup'){logEvent(`🔁 Follow-up scheduled for <b>${esc(l.name)}</b> (${esc(t.args?.when||'later')})`,l.id);}
+  if(t.name==='send_testimonials'){logEvent(`📹 Testimonials sent to <b>${esc(l.name)}</b>`,l.id);}}
+ if(!(a.tool_calls||[]).length&&a.intent&&a.intent!=='greeting')logEvent(`${channel==='voice'?'📞':'💬'} <b>${esc(l.name)}</b>: ${esc(a.intent.replace(/_/g,' '))}${a.language?' · '+(LANGN[a.language]||a.language):''}`,l.id);}
+async function agentTurn(l,opts={}){if(busy)return;busy=true;renderThread();try{const a=await brain(l,'whatsapp',opts);l.messages.push({role:'agent',text:a.reply,t:now(),a});applyAnalysis(l,a,'whatsapp');save();}catch(e){l.messages.push({role:'sys',text:'⚠️ '+e.message,t:now()});toast('Agent error: '+esc(e.message));}busy=false;renderThread();renderList();renderBrain();}
+async function sendLead(){const l=getLead(cur);const inp=document.getElementById('composeIn');const t=inp.value.trim();if(!l||!t||busy)return;inp.value='';l.messages.push({role:'lead',text:t,t:now()});l.updated=now();save();renderThread();await agentTurn(l);}
+async function autoLead(){const l=getLead(cur);if(!l||busy)return;busy=true;renderThread();try{const persona=l.persona||{name:l.name,lang:l.lang==='hi'?'hinglish':l.lang,background:'a working professional from Pune',attitude:'interested but cautious about price and whether it is genuine'};const t=await simLead(l,'whatsapp',persona);busy=false;if(t){l.messages.push({role:'lead',text:t,t:now(),sim:true});l.updated=now();save();renderThread();await agentTurn(l);}}catch(e){busy=false;toast('Sim error: '+esc(e.message));renderThread();}}
+async function followUp(){const l=getLead(cur);if(!l||busy)return;await agentTurn(l,{});}
+function delLead(){if(!confirm('Delete this lead and its conversation?'))return;S.leads=S.leads.filter(x=>x.id!==cur);cur=null;save();renderList();renderThread();renderBrain();}
+function renderBrain(){const l=getLead(cur);const b=document.getElementById('brain');if(!l){b.innerHTML='<div class="empty">Agent brain will appear here</div>';return;}const a=l.last;
+ b.innerHTML=`<h3>🧠 Agent brain <span class="chip g">live · ${esc(backend.model||'')}</span></h3>${a?`<div class="ins"><b>Language:</b> ${esc(LANGN[a.language]||a.language)} · ${esc(a.script)} script</div><div class="ins"><b>Intent:</b> ${esc(a.intent.replace(/_/g,' '))} · ${Math.round((a.confidence||0)*100)}%${a.objection?` · objection: ${esc(a.objection)}`:''}</div><div class="ins"><b>Strategy:</b> ${esc(a.strategy)}</div><div class="ins"><b>Guardrails:</b> ${(a.guardrails||[]).length?esc((a.guardrails||[]).join(' · ')):'—'}</div><div style="font-size:11px;color:var(--mut);margin-bottom:10px">${a.meta?`${a.meta.latency_ms} ms · ${a.meta.usage?.totalTokenCount||'?'} tokens`:''}</div>`:'<div class="ins">Waiting for the first reply…</div>'}
+ <h3 style="margin-top:8px">Lead profile <span class="chip">auto-built</span></h3><div class="kv"><span>Name</span><span>${esc(l.name)}</span></div><div class="kv"><span>Goal</span><span>${esc(l.goal||'—')}</span></div><div class="kv"><span>Background</span><span>${esc(l.background||'—')}</span></div><div class="kv"><span>Stage</span><span class="${STAGE[l.stage][1]}">${STAGE[l.stage][0]}</span></div><div class="kv"><span>Score</span><span><span class="score"><i style="width:${l.score}%"></i></span> ${l.score}</span></div><div style="font-size:12.5px;color:var(--mut);margin-top:8px">${esc(l.summary||'')}</div>
+ <h3 style="margin-top:14px">Tool calls</h3>${l.tools.length?[...l.tools].reverse().slice(0,6).map(t=>`<div class="tl"><b>${esc(t.name)}(${esc(JSON.stringify(t.args||{}))})</b><span>${fmtT(t.t)}</span></div>`).join(''):'<div style="font-size:12.5px;color:var(--mut)">None yet</div>'}`;}
+
+/* ================= STRESS TEST ================= */
+async function stress(kind){const P={price:{name:'Rohit Sharma',lang:'hinglish',background:'a 26-year-old sales executive from Pune earning a modest salary',attitude:'very price-sensitive, keeps saying it is expensive and asks for discounts'},trust:{name:'सुनिता जाधव',lang:'mr',background:'a 38-year-old homemaker from Nashik',attitude:'suspicious that this is a scam, asks for proof, mentions a friend who got cheated'},time:{name:'Neha Kulkarni',lang:'en',background:'a 31-year-old IT professional in Hinjewadi with a toddler',attitude:'interested but insists she has absolutely no time'},refund:{name:'विकास मोरे',lang:'hi_dev',background:'an existing student who paid last week',attitude:'angry, demands a refund and wants to talk to the founder'}}[kind];
+ const lead={id:uid(),name:P.name,phone:'',source:'Meta ad',lang:P.lang==='mr'?'mr':P.lang==='en'?'en':'hi',stage:'new',score:10,messages:[],tools:[],created:now(),updated:now(),last:null,summary:'',persona:P};S.leads.unshift(lead);save();go('inbox');selectLead(lead.id);lead.messages.push({role:'sys',text:`Stress test · AI-simulated lead (${kind}) · ${fmtT(now())}`,t:now()});renderThread();
+ await agentTurn(lead,{opener:true});for(let i=0;i<5;i++){if(!getLead(lead.id))break;await autoLead();if(lead.stage==='escalated'||lead.stage==='workshop_booked')break;}toast('Stress test finished — review the conversation and the brain panel.');}
+
+/* ================= VOICE ================= */
+let call={live:false,leadId:null,timer:null};
+function fillVcLeads(){const sel=document.getElementById('vcLead');sel.innerHTML=S.leads.map(l=>`<option value="${l.id}">${esc(l.name)} · ${STAGE[l.stage][0]}</option>`).join('')||'<option value="">No leads — create one in Conversations</option>';document.getElementById('vcAv').textContent=(S.cfg.agent||'R')[0];document.getElementById('vcName').textContent=`${S.cfg.agent} · ${S.cfg.biz}`;}
+function vcAdd(w,t){const T=document.getElementById('vcTr');if(T.querySelector('[style]'))T.innerHTML='';const d=document.createElement('div');d.className=w;d.textContent=(w==='a'?S.cfg.agent+': ':'Lead: ')+t;T.appendChild(d);T.scrollTop=1e9;}
+function pickVoice(lang){const vs=speechSynthesis.getVoices();const pref={hi:['hi-IN','hi'],hinglish:['hi-IN','hi'],mr:['mr-IN','mr','hi-IN','hi'],en:['en-IN','en']}[lang]||['hi'];for(const p of pref){const v=vs.find(v=>v.lang.toLowerCase().startsWith(p.toLowerCase()));if(v)return v;}return vs[0];}
+function speak(text,lang,cb){if(!('speechSynthesis' in window)){cb&&cb();return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/[*_#]/g,''));u.lang={hi:'hi-IN',hinglish:'hi-IN',mr:'mr-IN',en:'en-IN'}[lang]||'hi-IN';const v=pickVoice(lang);if(v)u.voice=v;u.rate=0.95;const ph=document.getElementById('phone');u.onstart=()=>ph.classList.add('speaking');u.onend=()=>{ph.classList.remove('speaking');cb&&cb();};u.onerror=()=>{ph.classList.remove('speaking');cb&&cb();};speechSynthesis.speak(u);}
+async function startCall(){if(call.live)return;const id=document.getElementById('vcLead').value;const l=getLead(id);if(!l){toast('Create a lead first (Conversations → New).');return;}call={live:true,leadId:id,timer:null,s:0};document.getElementById('phone').classList.add('live');document.getElementById('vcSt').textContent='Connected · 00:00';call.timer=setInterval(()=>{call.s++;const st=document.getElementById('vcSt');if(st.textContent.startsWith('Connected'))st.textContent=`Connected · ${String(Math.floor(call.s/60)).padStart(2,'0')}:${String(call.s%60).padStart(2,'0')}`;},1000);
+ document.getElementById('vcTr').innerHTML='';l.messages.push({role:'sys',text:`📞 Outbound call started · ${fmtT(now())}`,t:now()});await voiceAgentTurn(l,{opener:l.messages.filter(m=>m.role==='agent').length===0});}
+async function voiceAgentTurn(l,opts={}){document.getElementById('vcSt').textContent=S.cfg.agent+' is thinking…';try{const a=await brain(l,'voice',opts);l.messages.push({role:'agent',text:a.reply,t:now(),channel:'voice',a});applyAnalysis(l,a,'voice');save();vcAdd('a',a.reply);document.getElementById('vcBrain').innerHTML=`<div class="ins"><b>Language:</b> ${esc(LANGN[a.language]||a.language)}</div><div class="ins"><b>Intent:</b> ${esc(a.intent.replace(/_/g,' '))}${a.objection?' · '+esc(a.objection):''}</div><div class="ins"><b>Strategy:</b> ${esc(a.strategy)}</div><div class="kv"><span>Stage</span><span class="${STAGE[l.stage][1]}">${STAGE[l.stage][0]}</span></div><div class="kv"><span>Score</span><span>${l.score}</span></div><div class="kv"><span>Latency</span><span>${a.meta?.latency_ms||'?'} ms</span></div>${l.tools.length?`<div class="kv"><span>Last tool</span><span>${esc(l.tools[l.tools.length-1].name)}</span></div>`:''}`;
+  document.getElementById('vcSt').textContent=S.cfg.agent+' is speaking…';speak(a.reply,a.language||l.lang,()=>{if(call.live)document.getElementById('vcSt').textContent='Listening… (🎙️ or type)';});}
+ catch(e){toast('Agent error: '+esc(e.message));document.getElementById('vcSt').textContent='Error — '+e.message;}}
+async function vcUser(t){if(!call.live||!t.trim())return;const l=getLead(call.leadId);speechSynthesis.cancel();document.getElementById('phone').classList.remove('speaking');vcAdd('u',t);l.messages.push({role:'lead',text:t,t:now(),channel:'voice'});save();await voiceAgentTurn(l);}
+function listen(){if(!call.live){toast('Answer the call first.');return;}const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Speech recognition not supported here — type instead.');return;}speechSynthesis.cancel();const l=getLead(call.leadId);const r=new SR();r.lang={hi:'hi-IN',mr:'mr-IN',en:'en-IN'}[l.lang]||'hi-IN';const mic=document.getElementById('vcMic');mic.classList.add('rec');document.getElementById('vcSt').textContent='Listening…';r.onresult=e=>{mic.classList.remove('rec');vcUser(e.results[0][0].transcript);};r.onerror=r.onend=()=>mic.classList.remove('rec');r.start();}
+function endCall(){if(!call.live)return;speechSynthesis.cancel();clearInterval(call.timer);const l=getLead(call.leadId);if(l){l.messages.push({role:'sys',text:`📞 Call ended · ${Math.round(call.s)}s · ${fmtT(now())}`,t:now()});l.updated=now();save();logEvent(`📞 Call with <b>${esc(l.name)}</b> ended (${call.s}s) · ${STAGE[l.stage][0]}`,l.id);}call.live=false;document.getElementById('phone').classList.remove('live','speaking');document.getElementById('vcSt').textContent='Call ended · transcript saved to the conversation';}
+
+/* ================= DASHBOARD / LEADS ================= */
+function stats(){const L=S.leads;const msgs=L.reduce((n,l)=>n+l.messages.filter(m=>m.role==='agent').length,0);const calls=L.reduce((n,l)=>n+l.messages.filter(m=>m.role==='sys'&&/call started/.test(m.text)).length,0);const booked=L.filter(l=>['workshop_booked','enrolled'].includes(l.stage)).length;const human=L.filter(l=>['callback','escalated'].includes(l.stage)).length;const objs={};L.forEach(l=>l.messages.forEach(m=>{if(m.a&&m.a.intent&&m.a.intent.startsWith('objection_')){const k=m.a.intent.replace('objection_','');objs[k]=(objs[k]||0)+1;}}));return {leads:L.length,msgs,calls,booked,human,objs,interested:L.filter(l=>!['new','contacted','lost'].includes(l.stage)).length,contacted:L.filter(l=>l.messages.some(m=>m.role==='agent')).length,objection:L.filter(l=>l.messages.some(m=>m.a&&/^objection/.test(m.a.intent||''))).length,enrolled:L.filter(l=>l.stage==='enrolled').length};}
+function renderDash(){const s=stats();document.getElementById('k1').textContent=s.leads;document.getElementById('k1d').textContent=s.leads?`${Math.round(s.contacted/s.leads*100)}% contacted by the agent`:'Create your first lead';document.getElementById('k2').textContent=s.msgs;document.getElementById('k2d').textContent=`${s.calls} voice calls`;document.getElementById('k3').textContent=s.booked;document.getElementById('k3d').textContent=s.leads?`${Math.round(s.booked/s.leads*100)}% of leads`:'—';document.getElementById('k4').textContent=s.human;
+ document.getElementById('activity').innerHTML=S.events.length?S.events.slice(0,12).map(e=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px"><span>${e.text}</span><span style="color:var(--mut);white-space:nowrap;font-size:12px">${ago(e.t)}</span></div>`).join(''):'<div class="empty">No activity yet — create a lead in Conversations.</div>';
+ const f=[['Leads',s.leads],['Contacted',s.contacted],['Engaged',s.interested],['Objection handled',s.objection],['Workshop booked',s.booked],['Enrolled',s.enrolled]];const mx=Math.max(1,s.leads);document.getElementById('funnel').innerHTML=f.map(x=>`<div class="frow"><b>${x[0]}</b><div class="bar"><i style="width:${x[1]/mx*100}%"></i></div><span>${x[1]}</span></div>`).join('');renderObjs('objs');}
+function renderObjs(id){const o=stats().objs;const ents=Object.entries(o).sort((a,b)=>b[1]-a[1]);const mx=Math.max(1,...ents.map(e=>e[1]));document.getElementById(id).innerHTML=ents.length?ents.map(e=>`<div class="frow"><b>${esc(e[0])}</b><div class="bar"><i style="width:${e[1]/mx*100}%;background:var(--amber)"></i></div><span>${e[1]}</span></div>`).join(''):'<div style="color:var(--mut);font-size:13px">No objections recorded yet.</div>';}
+function renderLeads(){document.getElementById('leadRows').innerHTML=S.leads.length?S.leads.map(l=>`<tr class="click" onclick="go('inbox');selectLead('${l.id}')"><td><b>${esc(l.name)}</b>${l.phone?`<br><small style="color:var(--mut)">${esc(l.phone)}</small>`:''}</td><td><span class="chip">${esc(LANGN[l.lastLang]||LANGN[l.lang]||l.lang)}</span></td><td style="color:var(--mut)">${esc(l.source)}</td><td>${esc((l.lastIntent||'—').replace(/_/g,' '))}</td><td><span class="score"><i style="width:${l.score}%"></i></span> ${l.score}</td><td><span class="${STAGE[l.stage][1]}">${STAGE[l.stage][0]}</span></td><td style="color:var(--mut);max-width:260px">${esc(l.summary||'')}</td><td style="color:var(--mut);white-space:nowrap">${ago(l.updated)}</td></tr>`).join(''):'<tr><td colspan="8" class="empty">No leads yet.</td></tr>';}
+function exportCSV(){const rows=[['name','phone','source','language','stage','score','last_intent','summary','messages','created']].concat(S.leads.map(l=>[l.name,l.phone,l.source,l.lastLang||l.lang,l.stage,l.score,l.lastIntent||'',l.summary||'',l.messages.filter(m=>m.role==='agent'||m.role==='lead').length,l.created]));const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='vartaa-leads.csv';a.click();}
+
+/* ================= CONFIG ================= */
+const CFG_KEYS=['biz','owner','agent','lang','course','promise','who','format','price','offer','offerNote','emi','batch','workshop','proof','refund','tone','guard','esc','source','objections'];
+function fillCfg(){CFG_KEYS.forEach(k=>{const el=document.getElementById('c_'+k);if(el)el.value=S.cfg[k]??'';});}
+function saveConfig(notify){CFG_KEYS.forEach(k=>{const el=document.getElementById('c_'+k);if(el)S.cfg[k]=el.type==='number'?Number(el.value):el.value;});save();document.getElementById('wsName').textContent=S.cfg.biz;if(notify){document.getElementById('cfgMsg').textContent='Saved ✓ — the agent uses this from the next message.';document.getElementById('pbMsg').textContent='Saved ✓';setTimeout(()=>{document.getElementById('cfgMsg').textContent='';document.getElementById('pbMsg').textContent='';},3000);}}
+async function testAgent(){saveConfig(false);const out=document.getElementById('testOut');out.innerHTML='<div class="ins">Generating opener…</div>';try{const fake={name:'Test lead',source:S.cfg.source,messages:[],lang:S.cfg.lang};const a=await brain(fake,'whatsapp',{opener:true});out.innerHTML=`<div class="m agent" style="max-width:100%;background:#f3f4f6">${esc(a.reply)}</div><div style="font-size:12px;color:var(--mut);margin-top:6px">${esc(LANGN[a.language]||a.language)} · ${a.meta?.latency_ms} ms · ${esc(a.strategy)}</div>`;}catch(e){out.innerHTML=`<div class="banner">⚠️ ${esc(e.message)}</div>`;}}
+
+/* ================= INIT ================= */
+fillCfg();document.getElementById('wsName').textContent=S.cfg.biz;health();renderDash();
+if('speechSynthesis' in window)speechSynthesis.getVoices();
+</script>
+</body>
+</html>

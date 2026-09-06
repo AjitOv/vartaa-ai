@@ -1,0 +1,8 @@
+{
+  "name": "vartaa-ai",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Vartaa AI — vernacular AI sales rep for coaching businesses (WhatsApp + voice)",
+  "scripts": { "dev": "netlify dev" },
+  "engines": { "node": ">=18" }
+}
