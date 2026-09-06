@@ -1,8 +1,11 @@
 {
   "name": "vartaa-ai",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
-  "description": "Vartaa AI — vernacular AI sales rep for coaching businesses (WhatsApp + voice)",
-  "scripts": { "dev": "netlify dev" },
+  "type": "module",
+  "description": "Vartaa AI — vernacular AI sales rep for coaching businesses (WhatsApp + voice). API on Google Cloud Run, app on Firebase Hosting.",
+  "main": "server/index.mjs",
+  "scripts": { "start": "node server/index.mjs", "dev": "GEMINI_API_KEY=$GEMINI_API_KEY node server/index.mjs" },
+  "dependencies": { "express": "^4.19.2" },
   "engines": { "node": ">=18" }
 }

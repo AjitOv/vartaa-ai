@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      { "source": "/api/**", "run": { "serviceId": "vartaa-api", "region": "asia-south1" } },
+      { "source": "**", "destination": "/index.html" }
+    ]
+  },
+  "firestore": { "rules": "firestore.rules" }
+}
