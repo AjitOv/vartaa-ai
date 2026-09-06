@@ -15,7 +15,7 @@ Everything the agent says, classifies and does is generated live. Leads and conv
 
 ## Deploy (Netlify)
 1. Import this repo in Netlify (build command: none, publish dir: `public`, functions: `netlify/functions` — all set in `netlify.toml`).
-2. Site configuration → Environment variables → add `GEMINI_API_KEY` (optional: `GEMINI_MODEL`, default `gemini-2.5-flash`).
+2. Site configuration → Environment variables → add `GEMINI_API_KEY` (optional: `GEMINI_MODEL`, default `gemini-3.6-flash`).
 3. Deploy. Open the site → Conversations → **+ New** → talk to the agent.
 
 ## Local

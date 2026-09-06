@@ -3,7 +3,7 @@
 
 export const config = { path: "/api/chat" };
 
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 
 const SCHEMA = {
   type: "OBJECT",
